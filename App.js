@@ -6,7 +6,8 @@ import GenderScreen from './Screen/GenderScreen';
 import AgeScreen from './Screen/Age';
 import BirthdayScreen from './Screen/BirthdayScreen';
 import ButtonTab from './buttonTab';
-
+import Beginner from './begginer_wo';
+import Home from './home';
 
 const Stack = createStackNavigator();
 
@@ -18,7 +19,9 @@ const App = () => {
         <Stack.Screen name="GenderScreen" component={GenderScreen} options={{ headerShown: false }} />
         <Stack.Screen name="AgeScreen" component={AgeScreen} options={{ headerShown: false }} />
         <Stack.Screen name="BirthdayScreen" component={BirthdayScreen} options={{ headerShown: false }} />
+        <Stack.Screen name="Home" component={Home} options={{ headerShown: false }} />
         <Stack.Screen name="ButtonTab" component={ButtonTab} options={{ headerShown: false }} />
+        <Stack.Screen name="Beginner" component={Beginner} options={{ headerShown: false }} />
       </Stack.Navigator>
     </NavigationContainer>
   );

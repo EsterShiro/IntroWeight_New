@@ -1,10 +1,11 @@
 import React, { useState, useRef } from 'react';
-import { View, Text, StyleSheet, Image, ScrollView, TouchableOpacity, Animated,Platform } from 'react-native';
+import { View, Text, StyleSheet, Image, ScrollView, TouchableOpacity, Animated, Platform } from 'react-native';
 import { SliderBox } from 'react-native-image-slider-box';
 import Icon from 'react-native-vector-icons/FontAwesome6';
-import BegginerScreen from './begginer_wo';
-const image = require('./assets/RB-remove.png');
+import Beginner from './begginer_wo';
+import { useNavigation } from '@react-navigation/native'; // เพิ่ม import
 
+const image = require('./assets/RB-remove.png');
 
 const workoutImages = [
     require('./assets/adultmember1.jpg'),
@@ -13,7 +14,6 @@ const workoutImages = [
     require('./assets/legmuscle.jpg'),
     require('./assets/backmuscle.jpg'),
     require('./assets/fullbody.jpg'),
-     // เพิ่มรูป Chest Muscle
 ];
 
 const workoutTitles = [
@@ -23,7 +23,6 @@ const workoutTitles = [
     'Leg Muscle \n Workout',
     'Back Muscle \n Workout',
     'Full Body \n Weight',
-     
 ];
 
 function HomeScreen() {
@@ -37,23 +36,22 @@ function HomeScreen() {
     const [selectedFilter, setSelectedFilter] = useState('All');
     const filters = ['All', 'Chest', 'Arm', 'Leg', 'Back'];
     const scrollY = useRef(new Animated.Value(0)).current;
-    const headerHeight = 0; // กำหนดความสูงของ header
-    const scrollViewRef = useRef(null); // สร้างตัวอ้างอิงสำหรับ ScrollView
+    const headerHeight = 0;
+    const scrollViewRef = useRef(null);
+    const navigation = useNavigation(); // ใช้ useNavigation hook
 
     const handleFilterPress = (filter) => {
         setSelectedFilter(filter);
-
-        // ค้นหาตำแหน่งของแท็บที่ต้องการ
         const index = filteredWorkouts.findIndex((item) => item.category === filter);
         if (index !== -1 && scrollViewRef.current) {
-            scrollViewRef.current.scrollTo({ y: index * 250, animated: true }); // เลื่อนไปยังตำแหน่งแท็บ
+            scrollViewRef.current.scrollTo({ y: index * 250, animated: true });
         }
     };
 
     const filteredWorkouts = workoutImages.map((image, index) => ({
         image,
         title: workoutTitles[index],
-        category: filters[index % filters.length], // กำหนดประเภทให้แต่ละรายการ
+        category: filters[index % filters.length],
     }));
 
     const displayedWorkouts = [
@@ -71,7 +69,7 @@ function HomeScreen() {
         <View style={styles.screen}>
             <Animated.View style={{ transform: [{ translateY: headerTranslateY }] }}>
                 <Image style={styles.image} source={image} />
-                <Icon style={styles.icons}name="fire" size={30} color="#ff4000"/>
+                <Icon style={styles.icons} name="fire" size={30} color="#ff4000" />
                 <SliderBox
                     images={images}
                     sliderBoxHeight={200}
@@ -107,7 +105,7 @@ function HomeScreen() {
             </Animated.View>
 
             <ScrollView
-                ref={scrollViewRef} // เชื่อมต่อ ScrollView กับตัวอ้างอิง
+                ref={scrollViewRef}
                 showsVerticalScrollIndicator={false}
                 scrollEventThrottle={16}
                 onScroll={Animated.event(
@@ -120,12 +118,19 @@ function HomeScreen() {
                         <View key={index} style={styles.workoutItem}>
                             <Image source={item.image} style={styles.workoutImage} />
                             <Text style={styles.workoutTitle}>{item.title}</Text>
-                            <TouchableOpacity style={styles.startButton}>
+                            <TouchableOpacity
+                                style={styles.startButton}
+                                onPress={() => {
+                                    if (item.title.includes('Beginner')) { //ตรวจสอบว่าtitle มีคำว่า Beginner ไหม
+                                        navigation.navigate('Beginner'); //Navigate ไปยัง BegginerScreen
+                                    }
+
+                                }}
+                            >
                                 <Text style={styles.startButtonText}>Start Workout</Text>
                             </TouchableOpacity>
                         </View>
                     ))}
-                    
                 </View>
             </ScrollView>
         </View>
@@ -133,6 +138,8 @@ function HomeScreen() {
 }
 
 export default HomeScreen;
+
+// ... (ส่วน style คงเดิม)
 
 const styles = StyleSheet.create({
     screen: {

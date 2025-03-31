@@ -1,4 +1,5 @@
 import React from 'react';
+import Icon from 'react-native-vector-icons/FontAwesome6';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import HomeScreen from './Screen/HomeScreen';
@@ -21,7 +22,7 @@ const App = () => {
         <Stack.Screen name="BirthdayScreen" component={BirthdayScreen} options={{ headerShown: false }} />
         <Stack.Screen name="Home" component={Home} options={{ headerShown: false }} />
         <Stack.Screen name="ButtonTab" component={ButtonTab} options={{ headerShown: false }} />
-        <Stack.Screen name="Beginner" component={Beginner} options={{ headerShown: false }} />
+        <Stack.Screen name="Beginner" component={Beginner} options={{ headerShown: false }}/>
       </Stack.Navigator>
     </NavigationContainer>
   );

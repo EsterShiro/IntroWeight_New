@@ -29,7 +29,7 @@ const filters = ['All', 'Chest', 'Arm', 'Leg', 'Back'];
 const WorkoutItem = memo(({ item, onPress }) => {
   return (
     <View style={styles.workoutItem}>
-      <Image source={item.image} style={styles.workoutImage} cache="cache"/>
+      <Image source={item.image} style={styles.workoutImage} cache="cache" />
       <Text style={styles.workoutTitle}>{item.title}</Text>
       <TouchableOpacity style={styles.startButton} onPress={onPress}>
         <Text style={styles.startButtonText}>Start Workout</Text>
@@ -38,7 +38,7 @@ const WorkoutItem = memo(({ item, onPress }) => {
   );
 });
 
-function HomeComponent() {
+function HomeComponent({ navigation }) {
   const images = [
     require('./assets/im1.jpg'),
     require('./assets/im2.jpg'),
@@ -50,13 +50,16 @@ function HomeComponent() {
   const scrollY = useRef(new Animated.Value(0)).current;
   const headerHeight = 0;
   const scrollViewRef = useRef(null);
-  const navigation = useNavigation();
 
   const handleFilterPress = (filter) => {
     setSelectedFilter(filter);
-    const index = filteredWorkouts.findIndex((item) => item.category === filter);
-    if (index !== -1 && scrollViewRef.current) {
-      scrollViewRef.current.scrollTo({ y: index * 250, animated: true });
+    if (filter === 'All') {
+      scrollViewRef.current.scrollTo({ y: 0, animated: true });
+    } else {
+      const index = filteredWorkouts.findIndex((item) => item.category.toLowerCase() === filter.toLowerCase());
+      if (index !== -1 && scrollViewRef.current) {
+        scrollViewRef.current.scrollTo({ y: index * 250, animated: true });
+      }
     }
   };
 
@@ -117,7 +120,7 @@ function HomeComponent() {
         scrollEventThrottle={16}
         onScroll={Animated.event([{ nativeEvent: { contentOffset: { y: scrollY } } }], { useNativeDriver: false })}
       >
-        <View style={{ paddingTop: headerHeight }}>
+        <View style={{ paddingTop: headerHeight, paddingBottom: 400 }}>
           {filteredWorkouts.map((item, index) => (
             <WorkoutItem
               key={index}
@@ -131,8 +134,7 @@ function HomeComponent() {
   );
 }
 
-export default HomeComponent;
-
+export default memo(HomeComponent);
 
 const styles = StyleSheet.create({
     screen: {

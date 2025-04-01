@@ -59,6 +59,13 @@ function BegginerScreen({ navigation }) {
     title2: workoutTitles2[index],
     category: workoutTitles[index].split(' ')[0], // แยกคำแรกจาก title เพื่อใช้เป็น category
   }));
+  
+  const handleStartWorkout = (title) => {
+    if (title.includes('Chest')) {
+      navigation.navigate('BeginnerChest');
+    }
+  };
+  
 
   const headerTranslateY = scrollY.interpolate({
     inputRange: [0, headerHeight],
@@ -76,7 +83,7 @@ function BegginerScreen({ navigation }) {
         </View>
 
         <View style={styles.Textcontainer}>
-          <Text style={styles.title}>Full Body Weight</Text>
+          <Text style={styles.title}>Beginner Weight</Text>
 
           <View>
             <Text style={styles.title2}>With Beginner</Text>

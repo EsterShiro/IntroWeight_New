@@ -1,93 +1,78 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
-import { WebView } from 'react-native-webview';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import FastImage from 'react-native-fast-image';
+// screens/BenchPressScreen.js
+import React, { useState, useEffect } from "react";
+import { View, Text, FlatList } from "react-native";
+import { WebView } from "react-native-webview"; // Import WebView for animated GIFs
+import { fetchExercises } from "../../api/exerciseDb";
 
-const BeginnerChest = () => {
-  const [gifUrl, setGifUrl] = useState(null);
+const CACHE_DURATION = 5 * 60 * 1000; // Cache duration: 5 minutes
+
+const BenchPressScreen = () => {
+  const [benchPressExercises, setBenchPressExercises] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [lastFetchTime, setLastFetchTime] = useState(null);
 
   useEffect(() => {
-    const fetchBenchPressGif = async () => {
-      setLoading(true);
-      try {
-        // ตรวจสอบข้อมูล GIF ที่แคชไว้
-        const cachedGif = await AsyncStorage.getItem('benchPressGif');
-        if (cachedGif) {
-          setGifUrl(cachedGif);
-          setLoading(false);
-          return;
-        }
+    const getBenchPressExercises = async () => {
+      const now = Date.now();
 
-        // หากไม่มีข้อมูลแคช เรียก API ด้วย fetch
-        const response = await fetch(
-          'https://exercisedb.p.rapidapi.com/exercises/bodyPart/back?limit=10&offset=0',
-          {
-            headers: {
-              'X-RapidAPI-Key': 'YOUR_RAPIDAPI_KEY', // แทนที่ด้วยคีย์ API ของคุณ
-              'X-RapidAPI-Host': 'exercisedb.p.rapidapi.com',
-            },
-          }
-        );
-
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const data = await response.json();
-
-        if (data.length > 0) {
-          const newGifUrl = data[0].gifUrl;
-          setGifUrl(newGifUrl);
-          // แคชข้อมูล GIF
-          await AsyncStorage.setItem('benchPressGif', newGifUrl);
-        } else {
-          setError('ไม่พบข้อมูล bench press');
-        }
-      } catch (err) {
-        setError('เกิดข้อผิดพลาดในการดึงข้อมูล');
-        console.error(err);
-      } finally {
+      // Check if cached data is still valid
+      if (lastFetchTime && now - lastFetchTime < CACHE_DURATION) {
         setLoading(false);
+        return;
+      }
+
+      try {
+        setLoading(true);
+        const data = await fetchExercises("chest"); // Fetch exercises for "chest"
+        // Filter exercises related to Bench Press
+        const benchPressData = data.filter((exercise) =>
+          exercise.name.toLowerCase().includes("chest dip")
+        );
+        setBenchPressExercises(benchPressData);
+        setLastFetchTime(now); // Update the last fetch time
+        setLoading(false);
+      } catch (err) {
+        setError(err);
+        setLoading(false);
+        console.error("Error fetching bench press exercises:", err);
       }
     };
 
-    fetchBenchPressGif();
-  }, []);
+    getBenchPressExercises();
+  }, [lastFetchTime]); // Re-run effect if `lastFetchTime` changes
 
   if (loading) {
-    return <Text>กำลังโหลด...</Text>;
+    return <Text>กำลังโหลดข้อมูล...</Text>;
   }
 
   if (error) {
-    return <Text>{error}</Text>;
-  }
-
-  if (!gifUrl) {
-    return <Text>ไม่พบภาพ GIF</Text>;
+    return <Text>เกิดข้อผิดพลาดในการโหลดข้อมูล: {error.message}</Text>;
   }
 
   return (
-    <ScrollView style={styles.container}>
-      <WebView
-        source={{ uri: gifUrl }}
-        style={styles.gif}
-        scrollEnabled={false}
+    <View>
+      <Text>ท่า Bench Press</Text>
+      <FlatList
+        data={benchPressExercises}
+        keyExtractor={(item) => item.id.toString()}
+        renderItem={({ item }) => (
+          <View>
+            <Text>{item.name}</Text>
+            {/* Display GIF using WebView if available */}
+            {item.gifUrl && (
+              <WebView
+                source={{ uri: item.gifUrl }}
+                style={{ width: 200, height: 200 }}
+                javaScriptEnabled={true}
+                scrollEnabled={false}
+              />
+            )}
+          </View>
+        )}
       />
-    </ScrollView>
+    </View>
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    padding: 16,
-  },
-  gif: {
-    width: 300,
-    height: 200,
-  },
-});
-
-export default BeginnerChest;
+export default BenchPressScreen;

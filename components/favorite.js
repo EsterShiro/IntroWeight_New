@@ -61,7 +61,7 @@ const FavoriteScreen = () => {
     return (
         <View style={styles.container}>
             {favoriteExercises.length === 0 ? (
-                <Text>ไม่มีท่าออกกำลังกายที่ถูกใจควย</Text>
+                <Text>ไม่มีท่าออกกำลังกายที่ถูกใจ</Text>
             ) : (
                 <FlatList
                     data={favoriteExercises}

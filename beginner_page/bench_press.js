@@ -208,6 +208,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
   },
   loadingText: {
+    flex: 1,
     alignItems: "center",
     justifyContent: "center",
     fontSize: 16,

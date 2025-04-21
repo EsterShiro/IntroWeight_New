@@ -41,12 +41,29 @@ function BenchPressScreen({ navigation }) {
     try {
       const newFavoriteState = !isFavorite;
       setIsFavorite(newFavoriteState);
+
+      const favoriteKey = "favoriteExercises";
+      const benchPressKey = "benchPress";
+
+      const existingFavorites =
+        JSON.parse(await AsyncStorage.getItem(favoriteKey)) || {};
+
+      if (newFavoriteState) {
+        existingFavorites[benchPressKey] = benchPressData;
+      } else {
+        delete existingFavorites[benchPressKey];
+      }
+
+      await AsyncStorage.setItem(
+        favoriteKey,
+        JSON.stringify(existingFavorites)
+      );
       await AsyncStorage.setItem(
         "benchPressFavorite",
         JSON.stringify(newFavoriteState)
       );
     } catch (err) {
-      console.error("Error saving favorite state:", err);
+      console.error("Error updating favorite state:", err);
     }
   };
 
@@ -128,7 +145,7 @@ function BenchPressScreen({ navigation }) {
         />
       </TouchableOpacity>
 
-      <TouchableOpacity 
+      <TouchableOpacity
         onPress={() =>
           Linking.openURL("https://www.youtube.com/watch?v=4Y2ZdHCOXok")
         }

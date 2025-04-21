@@ -61,7 +61,7 @@ const FavoriteScreen = () => {
     return (
         <View style={styles.container}>
             {favoriteExercises.length === 0 ? (
-                <Text>ไม่มีท่าออกกำลังกายที่ถูกใจ</Text>
+                <Text>ไม่มีท่าออกกำลังกายที่ถูกใจควย</Text>
             ) : (
                 <FlatList
                     data={favoriteExercises}
@@ -130,6 +130,7 @@ const styles = StyleSheet.create({
     trashIcon: {
         padding: 5,
     },
+
 });
 
 export default FavoriteScreen;

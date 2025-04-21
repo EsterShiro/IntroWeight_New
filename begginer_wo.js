@@ -12,7 +12,7 @@ import Icon from "react-native-vector-icons/FontAwesome6";
 function BeginnerGuideScreen({ navigation }) {
   const basicExercises = [
     { name: "Chest", description: "บริหารกล้ามเนื้อส่วนหน้าอก" }, // Replace with your image path
-    { name: "Arm", description: "บริหารกล้ามเนื้อส่วนแขน" }, // Replace with your image path
+    { name: "Arms", description: "บริหารกล้ามเนื้อส่วนแขน" }, // Replace with your image path
     { name: "Back", description: "บริหารกล้ามเนื้อส้วนหลัง" }, // Replace with your image path
     { name: "Leg", description: "บริหารกล้ามส่วนขา" }, // Replace with your image path
     { name: "Abs", description: "บริหารกล้ามเนื้อส่วนหน้าท้อง" }, // Replace with your image path

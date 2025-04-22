@@ -100,7 +100,7 @@ function BegginerChest({ navigation }) {
     <View style={styles.container}>
       <Animated.View style={{ transform: [{ translateY: headerTranslateY }] }}>
         <View style={styles.header}>
-          <TouchableOpacity onPress={() => navigation.navigate("Home")}>
+          <TouchableOpacity onPress={() => navigation.navigate("ButtonTab")}>
             <Icon
               style={styles.icon}
               name="chevron-left"

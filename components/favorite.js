@@ -10,6 +10,7 @@ import {
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Ionicons } from "@expo/vector-icons"; // Import Ionicons for the trash icon
+import Icon from "react-native-vector-icons/FontAwesome6";
 
 function FavoriteScreen({ navigation }) {
   const [favorites, setFavorites] = useState([]);
@@ -108,9 +109,7 @@ function FavoriteScreen({ navigation }) {
       <View style={styles.textContainer}>
         <TouchableOpacity
           onPress={() => {
-            if (
-              item.name === "barbell bench press" 
-            ) {
+            if (item.name === "barbell bench press") {
               navigation.navigate("BenchPress", { item });
             } else if (item.name === "assisted chest dip (kneeling)") {
               navigation.navigate("Dip", { item });
@@ -141,6 +140,12 @@ function FavoriteScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
+      <TouchableOpacity
+        style={styles.heartIcon}
+        onPress={() => navigation.navigate("ButtonTab")}
+      >
+        <Icon style={styles.icon} name="chevron-left" />
+      </TouchableOpacity>
       <TouchableOpacity
         style={styles.globalTrashIcon}
         onPress={() => setShowTrashIcons((prev) => !prev)} // Toggle trash icons
@@ -174,6 +179,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: "bold",
     marginBottom: 20,
+    left : 40,
   },
   itemContainer: {
     position: "relative",
@@ -207,6 +213,13 @@ const styles = StyleSheet.create({
   },
   textContainer: {
     flex: 1,
-    marginLeft:20, // Allow text to take remaining space
+    marginLeft: 20, // Allow text to take remaining space
+  },
+  icon: {
+    color: "black",
+    fontSize: 25,
+    top: 3,
+    left: 5,
+    position: "absolute",
   },
 });

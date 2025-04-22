@@ -12,20 +12,33 @@ import {
 import Icon from "react-native-vector-icons/FontAwesome6";
 
 const workoutImages = [
-  require('../assets/image_chest/BenchPress.jpg'),
-  require('../assets/image_chest/Dip.jpg'),
-  require('../assets/image_chest/cablechestfly.jpg'), 
+  require("../assets/image_chest/BenchPress.jpg"),
+  require("../assets/image_chest/Dip.jpg"),
+  require("../assets/image_chest/cablebench.png"),
+  require("../assets/image_arms/bicepcurl.png"),
+  require("../assets/image_arms/cablewistcurl.png"),
+  require("../assets/image_legs/dead.jpg"),
 ];
- 
 
-const workoutTitles = ["Bench Press", "Dip", "Cable Chest Fly"];
-const workoutTitles2 = ["Chest", "Chest", "Chest"];
+const workoutTitles = [
+  "Bench Press",
+  "Dip",
+  "Cable bench press",
+  "Bicep curl",
+  "Cable wrist curl",
+  "Barbell deadlift",
+];
+const workoutTitles2 = ["Chest", "Chest", "Chest", "Arm", "Arm", "Leg"];
 
 const filters = ["All", "Chest", "Arm", "Leg", "Back", "Abs"];
 
 const WorkoutItem = memo(({ item, onPress }) => {
   return (
-    <TouchableOpacity onPress={onPress} style={styles.workoutItem} activeOpacity={1}>
+    <TouchableOpacity
+      onPress={onPress}
+      style={styles.workoutItem}
+      activeOpacity={1}
+    >
       <Image source={item.image} style={styles.workoutImage} cache="cache" />
       <Text style={styles.workoutTitle}>{item.title}</Text>
       <Text style={styles.workoutTitle2}>{item.title2}</Text>
@@ -43,31 +56,39 @@ function BegginerChest({ navigation }) {
   const handleFilterPress = (filter) => {
     setSelectedFilter(filter);
     if (filter === "All") {
-      scrollViewRef.current.scrollTo({ y: 0, animated: true }); // เลื่อนไปด้านบนสุดเมื่อเลือก "All"
+      scrollViewRef.current.scrollTo({ y: 0, animated: true }); // Scroll to the top for "All"
     } else {
       const index = filteredWorkouts.findIndex(
         (item) => item.category.toLowerCase() === filter.toLowerCase()
       );
       if (index !== -1 && scrollViewRef.current) {
-        scrollViewRef.current.scrollTo({ y: index * 250, animated: true }); // เลื่อนไปยังรายการที่ตรงกับตัวกรอง
+        scrollViewRef.current.scrollTo({ y: index * 250 - 50, animated: true }); // Scroll slightly above the matched item
       }
     }
   };
+
   const filteredWorkouts = workoutImages.map((image, index) => ({
     image,
     title: workoutTitles[index],
     title2: workoutTitles2[index],
-    category: workoutTitles[index].split(' ')[0], // แยกคำแรกจาก title เพื่อใช้เป็น category
+    category: workoutTitles2[index], // Use workoutTitles2 directly for the category
   }));
 
   const handleStartWorkout = (title) => {
-    if (title.includes('Bench Press')) {
-      navigation.navigate('BenchPress');
+    if (title.includes("Bench Press")) {
+      navigation.navigate("BenchPress");
+    } else if (title.includes("Dip")) {
+      navigation.navigate("Dip");
+    } else if (title.includes("Cable bench press")) {
+      navigation.navigate("Cablebench");
+    } else if (title.includes("Bicep curl")) {
+      navigation.navigate("Bicepcurl");
+    } else if (title.includes("Cable wrist curl")) {
+      navigation.navigate("Cablecurl");
+    } else if (title.includes("Barbell deadlift")) {
+      navigation.navigate("Barbelldead");
     }
   };
-  
-
-
 
   const headerTranslateY = scrollY.interpolate({
     inputRange: [0, headerHeight],
@@ -79,8 +100,13 @@ function BegginerChest({ navigation }) {
     <View style={styles.container}>
       <Animated.View style={{ transform: [{ translateY: headerTranslateY }] }}>
         <View style={styles.header}>
-          <TouchableOpacity onPress={() => navigation.navigate("Beginner")}>
-            <Icon style={styles.icon} name="chevron-left" size={20} color="#000000" />
+          <TouchableOpacity onPress={() => navigation.navigate("ButtonTab")}>
+            <Icon
+              style={styles.icon}
+              name="chevron-left"
+              size={20}
+              color="#000000"
+            />
           </TouchableOpacity>
         </View>
 
@@ -119,24 +145,24 @@ function BegginerChest({ navigation }) {
       </Animated.View>
 
       <ScrollView
-          ref={scrollViewRef}
-          showsVerticalScrollIndicator={false}
-          scrollEventThrottle={16}
-          onScroll={Animated.event(
-    [{ nativeEvent: { contentOffset: { y: scrollY } } }],
-    { useNativeDriver: false }
-  )}
->
-      <View style={{ paddingTop: headerHeight, paddingBottom: 200 }}>
+        ref={scrollViewRef}
+        showsVerticalScrollIndicator={false}
+        scrollEventThrottle={16}
+        onScroll={Animated.event(
+          [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+          { useNativeDriver: false }
+        )}
+      >
+        <View style={{ paddingTop: headerHeight, paddingBottom: 200 }}>
           {filteredWorkouts.map((item, index) => (
-          <WorkoutItem
-            key={index}
-            item={item}
-            onPress={() => handleStartWorkout(item.title)}
-      />
-    ))}
-      </View>
-</ScrollView>
+            <WorkoutItem
+              key={index}
+              item={item}
+              onPress={() => handleStartWorkout(item.title)}
+            />
+          ))}
+        </View>
+      </ScrollView>
     </View>
   );
 }

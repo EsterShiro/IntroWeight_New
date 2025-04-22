@@ -16,8 +16,8 @@ import Icon2 from "react-native-vector-icons/Ionicons"; // Ensure FontAwesome 6 
 
 const CACHE_DURATION = 5 * 60 * 1000; // Cache duration: 5 minutes
 
-function BenchPressScreen({ navigation }) {
-  const [benchPressData, setBenchPressData] = useState(null);
+function CablecurlScreen({ navigation }) {
+  const [cablecurlData, setcablecurlData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isFavorite, setIsFavorite] = useState(false); // Initialize as false
@@ -25,7 +25,7 @@ function BenchPressScreen({ navigation }) {
   useEffect(() => {
     const loadFavoriteState = async () => {
       try {
-        const favoriteState = await AsyncStorage.getItem("benchPressFavorite");
+        const favoriteState = await AsyncStorage.getItem("cablecurlFavorite");
         if (favoriteState !== null) {
           setIsFavorite(JSON.parse(favoriteState));
         }
@@ -43,18 +43,18 @@ function BenchPressScreen({ navigation }) {
       setIsFavorite(newFavoriteState);
 
       const favoriteKey = "favoriteExercises";
-      const benchPressKey = "barbell bench press";
+      const cablecurlKey = "cable wrist curl";
 
       const existingFavorites =
         JSON.parse(await AsyncStorage.getItem(favoriteKey)) || {};
 
       if (newFavoriteState) {
-        existingFavorites[benchPressKey] = {
-          id: benchPressKey,
-          name: "barbell bench press",
+        existingFavorites[cablecurlKey] = {
+          id: cablecurlKey,
+          name: "cable wrist curl",
         };
       } else {
-        delete existingFavorites[benchPressKey];
+        delete existingFavorites[cablecurlKey];
       }
 
       await AsyncStorage.setItem(
@@ -62,7 +62,7 @@ function BenchPressScreen({ navigation }) {
         JSON.stringify(existingFavorites)
       );
       await AsyncStorage.setItem(
-        "benchPressFavorite",
+        "cablecurlFavorite",
         JSON.stringify(newFavoriteState)
       );
     } catch (err) {
@@ -71,10 +71,10 @@ function BenchPressScreen({ navigation }) {
   };
 
   useEffect(() => {
-    const getBenchPressExercise = async () => {
+    const getdipExercise = async () => {
       const now = Date.now();
-      const cacheKey = "barbellBenchPressData";
-      const cacheTimeKey = "barbellBenchPressLastFetchTime";
+      const cacheKey = "cablecurlData";
+      const cacheTimeKey = "cablecurlLastFetchTime";
 
       try {
         const cachedData = await AsyncStorage.getItem(cacheKey);
@@ -85,7 +85,7 @@ function BenchPressScreen({ navigation }) {
           cachedTime &&
           now - parseInt(cachedTime) < CACHE_DURATION
         ) {
-          setBenchPressData(JSON.parse(cachedData));
+          setcablecurlData(JSON.parse(cachedData));
           setLoading(false);
           return;
         }
@@ -97,43 +97,43 @@ function BenchPressScreen({ navigation }) {
         if (data) {
           exercises = JSON.parse(data);
         } else {
-          exercises = await fetchExercises("chest"); // Fetch exercises if cache is empty
+          exercises = await fetchExercises("lower arms");
           await AsyncStorage.setItem(
             "exerciseDbCache",
             JSON.stringify(exercises)
           );
         }
 
-        const benchPressExercise = exercises.find((exercise) =>
-          exercise.name.toLowerCase().includes("barbell bench press")
+        const dipExercise = exercises.find((exercise) =>
+          exercise.name.toLowerCase().includes("cable wrist curl")
         );
 
-        if (benchPressExercise) {
+        if (dipExercise) {
           await AsyncStorage.setItem(
             cacheKey,
-            JSON.stringify(benchPressExercise)
+            JSON.stringify(dipExercise)
           );
           await AsyncStorage.setItem(cacheTimeKey, now.toString());
-          setBenchPressData(benchPressExercise);
+          setcablecurlData(dipExercise);
         } else {
           const fallbackData = {
-            equipment: "barbell",
-            gifUrl: "https://v2.exercisedb.io/image/pyQjKWYU5rS8Jo",
-            name: "barbell bench press",
+            equipment: "cable",
+            gifUrl: "https://v2.exercisedb.io/image/w4JS25uWlJcxsV",
+            name: "cable wrist curl",
           };
           await AsyncStorage.setItem(cacheKey, JSON.stringify(fallbackData));
           await AsyncStorage.setItem(cacheTimeKey, now.toString());
-          setBenchPressData(fallbackData);
+          setcablecurlData(fallbackData);
         }
         setLoading(false);
       } catch (err) {
         setError(err);
         setLoading(false);
-        console.error("Error fetching bench press exercise:", err);
+        console.error("Error fetching dip exercise:", err);
       }
     };
 
-    getBenchPressExercise();
+    getdipExercise();
   }, []);
 
   if (loading) {
@@ -148,8 +148,8 @@ function BenchPressScreen({ navigation }) {
     );
   }
 
-  if (!benchPressData) {
-    return <Text>ไม่พบข้อมูล Barbell Bench Press</Text>;
+  if (!cablecurlData) {
+    return <Text>ไม่พบข้อมูล dip</Text>;
   }
 
   return (
@@ -163,21 +163,21 @@ function BenchPressScreen({ navigation }) {
       <TouchableOpacity style={styles.iconContainer2} onPress={toggleFavorite}>
         <Icon2
           style={styles.icon2}
-          name={isFavorite ? "heart-sharp" : "heart-outline"} // Change icon based on favorite state
+          name={isFavorite ? "heart-sharp" : "heart-outline"} // เปลี่ยนชื่อไอคอนตามสถานะ
         />
       </TouchableOpacity>
 
       <TouchableOpacity
         onPress={() =>
-          Linking.openURL("https://www.youtube.com/watch?v=4Y2ZdHCOXok")
+          Linking.openURL("https://www.youtube.com/watch?v=9QsMPgZ-79Y")
         }
       >
-        <Text style={styles.title}>{benchPressData.name}</Text>
+        <Text style={styles.title}>{cablecurlData.name}</Text>
       </TouchableOpacity>
-      {benchPressData.gifUrl && (
+      {cablecurlData.gifUrl && (
         <View style={styles.gifContainer}>
           <WebView
-            source={{ uri: benchPressData.gifUrl }}
+            source={{ uri: cablecurlData.gifUrl }}
             style={{ width: 300, height: 300 }}
             javaScriptEnabled={true}
             scrollEnabled={false}
@@ -188,13 +188,13 @@ function BenchPressScreen({ navigation }) {
         <View style={styles.box1}>
           <Text style={styles.detailTitle}>อุปกรณ์ที่ใช้:</Text>
           <Text style={styles.detailText}>
-            บาร์เบล, ม้านั่งยกน้ำหนัก, แร็ค หรือ เสายกน้ำหนัก
+          เครื่อง Cable Crossover
           </Text>
         </View>
 
         <View style={styles.box2}>
           <Text style={styles.detailTitle}>กลุ่มกล้ามเนื้อเป้าหมาย:</Text>
-          <Text style={styles.detailText}>กล้ามเนื้อส่วนอกกลาง</Text>
+          <Text style={styles.detailText}>กล้ามเนื้อเฟลกเซอร์ของข้อมือ</Text>
         </View>
 
         <View style={styles.box3}>
@@ -202,7 +202,7 @@ function BenchPressScreen({ navigation }) {
             กลุ่มกล้ามเนื้อเป้าหมายส่วนรอง:
           </Text>
           <Text style={styles.detailText}>
-            กล้ามเนื้อ อกส่วนบน, กล้ามเนื้อไหล่ส่วนหน้า, กล้ามเนื้อหลังแขน
+          กล้ามเนื้อเรเดียล เฟลกเซอร์ คาร์ไพ
           </Text>
         </View>
 
@@ -214,13 +214,11 @@ function BenchPressScreen({ navigation }) {
           <Text style={styles.detailTitle}>วิธีการปฏิบัติ:</Text>
 
           <Text style={styles.detailText}>
-            1. นอนหงายบนม้านั่งยกน้ำหนัก โดยให้เท้าวางราบบนพื้น{"\n"}
-            2. จับบาร์เบลให้กว้างกว่าช่วงไหล่เล็กน้อย{"\n"}
-            3. ยกบาร์เบลขึ้นจากแร็คและยืดแขนให้ตรง{"\n"}
-            4. หายใจเข้าและค่อยๆ ลดบาร์เบลลงไปที่หน้าอก
-            โดยให้ข้อศอกอยู่ในแนวเดียวกับลำตัว{"\n"}
-            5. หายใจออกและดันบาร์เบลกลับขึ้นไปที่ตำแหน่งเริ่มต้น{"\n"}
-            6. ทำซ้ำตามจำนวนครั้งที่กำหนด{"\n"}
+            1. นั่งบนเครื่อง Cable Crossover โดยให้ข้อมืออยู่ในระดับเดียวกับสายเคเบิล{"\n"}
+            2. ยึดที่จับด้วยมือทั้งสองข้างและยืดแขนออกไปข้างหน้า{"\n"}
+            3. ค่อยๆดึงที่จับเข้าใกล้ตัว โดยให้ข้อมืออยู่ในตำแหน่งที่มั่นคง{"\n"}
+            4. ค่อยๆปล่อยที่จับกลับไปยังตำแหน่งเริ่มต้น{"\n"}
+            5. ทำซ้ำตามจำนวนครั้งที่กำหนด{"\n"}
           </Text>
         </View>
 
@@ -228,17 +226,17 @@ function BenchPressScreen({ navigation }) {
           <Text style={styles.detailTitle}>ข้อควรระวัง:</Text>
 
           <Text style={styles.detailText}>
-            1. ควรมีผู้ช่วยยกน้ำหนักในกรณีที่ยกน้ำหนักมาก{"\n"}
-            2. ควรใช้ฟอร์มที่ถูกต้องเพื่อป้องกันการบาดเจ็บ{"\n"}
-            3. หลีกเลี่ยงการยกน้ำหนักมากเกินไปในช่วงเริ่มต้น{"\n"}
-            4. ควรมีการวอร์มอัพก่อนการฝึก{"\n"}
+            1. หลีกเลี่ยงการยืดแขนมากเกินไปเพื่อป้องกันการบาดเจ็บ{"\n"}
+            2. ควรใช้แรงดึงที่เหมาะสมเพื่อไม่ให้เกิดการบาดเจ็บที่ข้อมือ{"\n"}
+            3. ควรมีการอบอุ่นร่างกายก่อนเริ่มออกกำลังกาย{"\n"}
+            4. หากรู้สึกเจ็บหรือไม่สบายควรหยุดทำทันที{"\n"}
           </Text>
         </View>
       </View>
     </ScrollView>
   );
 }
-export default BenchPressScreen;
+export default CablecurlScreen;
 
 const styles = StyleSheet.create({
   container: {
@@ -263,7 +261,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: "bold",
     marginTop: 60,
-    marginLeft: 100,
+    marginLeft: 120,
     marginBottom: 10,
     position: "absolute",
   },

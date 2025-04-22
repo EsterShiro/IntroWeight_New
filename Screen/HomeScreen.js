@@ -1,39 +1,55 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity,ImageBackground } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ImageBackground } from 'react-native';
 import CheckBox from 'expo-checkbox';
 
 export default function HomeScreen({ navigation }) {
   const [isSelected, setSelection] = React.useState(false);
 
   return (
-    
-    <View style={styles.container}>
-      <Text style={styles.title}>Welcome to Weight Training</Text>
-      <View style={styles.bottomContainer}>
+    <ImageBackground
+      source={require('../assets/im4.jpg')} // เพิ่มรูปพื้นหลัง
+      style={styles.background}
+    >
+      <View style={styles.container}>
+        <Text style={styles.title}>Welcome to Weight Training</Text>
+        <View style={styles.bottomContainer}>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => {
+              if (isSelected) {
+                navigation.navigate('GenderScreen');
+              } else {
+                alert('Please agree to the terms and conditions before proceeding.');
+              }
+            }}
+          >
+            <Text style={styles.buttonText}>Get started</Text>
+          </TouchableOpacity>
 
-        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('GenderScreen')}>
-          <Text style={styles.buttonText}>Get started</Text>
-        </TouchableOpacity>
-
-        <View style={styles.checkboxContainer}>
-          <CheckBox
-            value={isSelected}
-            onValueChange={setSelection}
-            style={styles.checkbox}
-          />
-          <Text style={styles.label}>I have read and agreed to the terms and conditions</Text>
+          <View style={styles.checkboxContainer}>
+            <CheckBox
+              value={isSelected}
+              onValueChange={setSelection}
+              style={styles.checkbox}
+            />
+            <Text style={styles.label}>I have read and agreed to the terms and conditions</Text>
+          </View>
         </View>
       </View>
-    </View>
+    </ImageBackground>
   );
 }
 
 const styles = StyleSheet.create({
+  background: {
+    flex: 1,
+    resizeMode: 'cover', // ปรับให้รูปครอบคลุมพื้นที่ทั้งหมด
+  },
   container: {
     flex: 1,
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: '#000',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)', // เพิ่มความโปร่งใสให้พื้นหลัง
     paddingVertical: 50,
   },
   title: {

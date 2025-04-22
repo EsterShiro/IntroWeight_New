@@ -1,13 +1,17 @@
-import React, { useState, useRef, useMemo, memo } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  Image,
-  ScrollView,
-  TouchableOpacity,
-  Animated,
-  Platform,
+import React, { useState, useRef, useMemo, memo, useEffect } from "react";
+import { 
+  View, 
+  Text, 
+  StyleSheet, 
+  Image, 
+  ScrollView, 
+  TouchableOpacity, 
+  Animated, 
+  Platform, 
+  BackHandler, 
+  Alert, 
+  ToastAndroid, 
+  AppState 
 } from "react-native";
 import { SliderBox } from "react-native-image-slider-box";
 import Icon from "react-native-vector-icons/FontAwesome6";
@@ -60,6 +64,57 @@ function HomeComponent({ navigation }) {
   const scrollY = useRef(new Animated.Value(0)).current;
   const headerHeight = 0;
   const scrollViewRef = useRef(null);
+  const [exitApp, setExitApp] = useState(false); // สถานะสำหรับตรวจสอบการกดปุ่ม Back
+  const appState = useRef(AppState.currentState); // ใช้ AppState เพื่อตรวจสอบสถานะของแอป
+
+  // ป้องกันการย้อนกลับด้วย BackHandler
+  useEffect(() => {
+    const backAction = () => {
+      if (exitApp) {
+        BackHandler.exitApp(); // ออกจากแอป
+      } else {
+        setExitApp(true); // ตั้งสถานะว่ากด Back ครั้งแรก
+        ToastAndroid.show("กดอีกครั้งเพื่อออกจากแอป", ToastAndroid.SHORT); // แสดงข้อความอักษรลอย
+
+        // รีเซ็ตสถานะหลังจาก 2 วินาที
+        setTimeout(() => {
+          setExitApp(false); // รีเซ็ตสถานะ
+        }, 2000);
+      }
+      return true; // ป้องกันการย้อนกลับ
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      backAction
+    );
+
+    return () => backHandler.remove(); // ลบ listener เมื่อ component ถูก unmount
+  }, [exitApp]);
+
+  // ตรวจสอบสถานะของแอปด้วย AppState
+  useEffect(() => {
+    const handleAppStateChange = (nextAppState) => {
+      if (
+        appState.current.match(/inactive|background/) &&
+        nextAppState === "active"
+      ) {
+        // รีเซ็ต navigation stack ไปที่หน้า HomeScreen เมื่อแอปถูกเปิดใหม่
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "HomeScreen" }],
+        });
+      }
+      appState.current = nextAppState;
+    };
+
+    const subscription = AppState.addEventListener(
+      "change",
+      handleAppStateChange
+    );
+
+    return () => subscription.remove(); // ลบ listener เมื่อ component ถูก unmount
+  }, [navigation]);
 
   const handleFilterPress = (filter) => {
     setSelectedFilter(filter);

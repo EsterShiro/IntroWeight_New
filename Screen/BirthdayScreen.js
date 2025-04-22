@@ -1,21 +1,60 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ImageBackground } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
+import Ionicons from 'react-native-vector-icons/Ionicons'; // นำเข้าไอคอน
 
 export default function BirthdayScreen({ navigation }) {
-  const [day, setDay] = useState('01');
-  const [month, setMonth] = useState('01');
-  const [year, setYear] = useState('2000');
+  const [day, setDay] = useState('');
+  const [month, setMonth] = useState('');
+  const [year, setYear] = useState('');
+  const [showError, setShowError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [blink, setBlink] = useState(false);
+
+  const handleNext = () => {
+    if (!day) {
+      setErrorMessage('Select a day');
+      triggerBlink();
+    } else if (!month) {
+      setErrorMessage('Select a month');
+      triggerBlink();
+    } else if (!year) {
+      setErrorMessage('Select a year');
+      triggerBlink();
+    } else {
+      setShowError(false);
+      setErrorMessage('');
+      navigation.navigate('ButtonTab'); // Navigate to the next screen
+    }
+  };
+
+  const triggerBlink = () => {
+    setShowError(true);
+    setBlink(true);
+    setTimeout(() => setBlink(false), 500); // Stop blinking after 500ms
+  };
+
+  const handleValueChange = (type, value) => {
+    if (type === 'day') setDay(value);
+    if (type === 'month') setMonth(value);
+    if (type === 'year') setYear(value);
+
+    // ซ่อนข้อความแจ้งเตือนเมื่อเลือกค่าที่ถูกต้อง
+    if (value) {
+      setShowError(false);
+      setErrorMessage('');
+    }
+  };
 
   return (
     <ImageBackground
-      source={require('../assets/im1.jpg')} // ใส่ path ของรูปภาพใน local
+      source={require('../assets/im1.jpg')}
       style={styles.background}
     >
       <View style={styles.container}>
         <View style={styles.header}>
           <TouchableOpacity onPress={() => navigation.navigate('AgeScreen')}>
-            <Text style={styles.backButton}>{'<'}</Text>
+            <Ionicons name="arrow-back" size={24} color="white" style={styles.backButtonIcon} />
           </TouchableOpacity>
           <View style={styles.progressBar}>
             <View style={styles.progress} />
@@ -23,39 +62,48 @@ export default function BirthdayScreen({ navigation }) {
         </View>
         <Text style={styles.title}>When is your birthday?</Text>
         <Text style={styles.subtitle}>Select your birthday</Text>
-        <View style={styles.pickerContainer}>
+        <View
+          style={[
+            styles.pickerContainer,
+            showError && blink && styles.blinkingContainer, // Add blinking effect
+          ]}
+        >
           <Picker
             selectedValue={day}
             style={styles.picker}
-            onValueChange={(itemValue) => setDay(itemValue)}
+            onValueChange={(itemValue) => handleValueChange('day', itemValue)}
             itemStyle={styles.pickerItem}
           >
+            <Picker.Item label="Day" value="" />
             {[...Array(31).keys()].map((d) => (
-              <Picker.Item key={d} label={`${d + 1}`} value={`${d + 1}`} />
+              <Picker.Item key={d} label={`${d + 1}`.padStart(2, '0')} value={`${d + 1}`.padStart(2, '0')} />
             ))}
           </Picker>
           <Picker
             selectedValue={month}
             style={styles.picker}
-            onValueChange={(itemValue) => setMonth(itemValue)}
+            onValueChange={(itemValue) => handleValueChange('month', itemValue)}
             itemStyle={styles.pickerItem}
           >
+            <Picker.Item label="Month" value="" />
             {[...Array(12).keys()].map((m) => (
-              <Picker.Item key={m} label={`${m + 1}`} value={`${m + 1}`} />
+              <Picker.Item key={m} label={`${m + 1}`.padStart(2, '0')} value={`${m + 1}`.padStart(2, '0')} />
             ))}
           </Picker>
           <Picker
             selectedValue={year}
             style={styles.picker}
-            onValueChange={(itemValue) => setYear(itemValue)}
+            onValueChange={(itemValue) => handleValueChange('year', itemValue)}
             itemStyle={styles.pickerItem}
           >
-            {[...Array(100).keys()].map((y) => (
+            <Picker.Item label="Year" value="" />
+            {[...Array(126).keys()].map((y) => (
               <Picker.Item key={y} label={`${1900 + y}`} value={`${1900 + y}`} />
             ))}
           </Picker>
         </View>
-        <TouchableOpacity style={styles.nextButton} onPress={() => navigation.navigate('ButtonTab')}> 
+        {showError && <Text style={styles.errorText}>{errorMessage}</Text>}
+        <TouchableOpacity style={styles.nextButton} onPress={handleNext}>
           <Text style={styles.nextButtonText}>Next</Text>
         </TouchableOpacity>
       </View>
@@ -86,17 +134,15 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     paddingTop: 40,
-    backgroundColor: '#000',
+    backgroundColor: 'rgba(0, 0, 0, 0)', // ทำให้โปร่งใส
   },
-  backButton: {
-    color: 'white',
-    fontSize: 24,
+  backButtonIcon: {
     marginRight: 10,
   },
   progressBar: {
     flex: 1,
     height: 10,
-    backgroundColor: 'gray',
+    backgroundColor: 'rgba(255, 255, 255, 0.6)', // สีขาวโปร่งๆ
     borderRadius: 5,
     overflow: 'hidden',
   },
@@ -122,16 +168,21 @@ const styles = StyleSheet.create({
   pickerContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    width: '80%',
+    width: '120%', // ลดความกว้างของกรอบ
     marginBottom: 40,
     backgroundColor: 'rgba(255, 255, 255, 0.3)',
     borderRadius: 25,
-    padding: 10,
+    padding: 13,
+  },
+  blinkingContainer: {
+    borderColor: 'rgba(253, 48, 48, 0.8)', // สีแดงโปร่งๆ
+    borderWidth: 2,
   },
   picker: {
-    flex: 1,
+    flex: 1, // ใช้ flex เพื่อให้ขนาดปรับอัตโนมัติ
     height: 50,
     color: 'white',
+    marginHorizontal: 5, // เพิ่มระยะห่างระหว่าง Picker
   },
   pickerItem: {
     color: 'white',
@@ -149,5 +200,10 @@ const styles = StyleSheet.create({
     color: 'black',
     fontSize: 18,
     fontWeight: 'bold',
+  },
+  errorText: {
+    color: 'red',
+    fontSize: 14,
+    marginTop: 10,
   },
 });

@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import Icon from 'react-native-vector-icons/FontAwesome6';
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
+import { ThemeProvider, ThemeContext } from './ThemeContext';
 import HomeScreen from './Screen/HomeScreen';
 import GenderScreen from './Screen/GenderScreen';
 import AgeScreen from './Screen/Age';
@@ -12,12 +13,15 @@ import BeginnerS from './beginner_page/beginner';
 import Favorite from './components/favorite';
 import BenchPress from './beginner_page/bench_press';
 import Home from './home';
+import SettingScreen from './setting';
 
 const Stack = createStackNavigator();
 
-const App = () => {
+const AppNavigator = () => {
+  const { isDarkMode } = useContext(ThemeContext);
+
   return (
-    <NavigationContainer>
+    <NavigationContainer theme={isDarkMode ? DarkTheme : DefaultTheme}>
       <Stack.Navigator>
         <Stack.Screen name="HomeScreen" component={HomeScreen} options={{ headerShown: false }} />
         <Stack.Screen name="GenderScreen" component={GenderScreen} options={{ headerShown: false }} />
@@ -35,9 +39,17 @@ const App = () => {
 
         {/* favorite_screen*/}
         <Stack.Screen name="Favorite" component={Favorite} options={{ headerShown: false }} />
-        
+        <Stack.Screen name="Settings" component={SettingScreen} />
       </Stack.Navigator>
     </NavigationContainer>
+  );
+};
+
+const App = () => {
+  return (
+    <ThemeProvider>
+      <AppNavigator />
+    </ThemeProvider>
   );
 };
 

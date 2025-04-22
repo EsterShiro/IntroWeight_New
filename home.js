@@ -11,7 +11,8 @@ import {
   BackHandler, 
   Alert, 
   ToastAndroid, 
-  AppState 
+  AppState,
+  Linking, // ใช้สำหรับเปิดลิงก์
 } from "react-native";
 import { SliderBox } from "react-native-image-slider-box";
 import Icon from "react-native-vector-icons/Ionicons";
@@ -54,11 +55,11 @@ const WorkoutItem = memo(({ item, onPress }) => {
 
 function HomeComponent({ navigation }) {
   const images = [
-    require("./assets/im1.jpg"),
-    require("./assets/im2.jpg"),
-    require("./assets/im3.jpg"),
-    require("./assets/im4.jpg"),
-    require("./assets/im5.jpg"),
+    require("./assets/Protein.png"),
+    require("./assets/creatine.jpg"),
+    require("./assets/Steroid.jpg"),
+    require("./assets/india.jpg"),
+    require("./assets/werewolf-muscle.gif"),
   ];
   const [selectedFilter, setSelectedFilter] = useState("All");
   const scrollY = useRef(new Animated.Value(0)).current;
@@ -150,6 +151,8 @@ function HomeComponent({ navigation }) {
     extrapolate: "clamp",
   });
 
+  
+
   return (
     <View style={styles.screen}>
       <TouchableOpacity
@@ -158,8 +161,13 @@ function HomeComponent({ navigation }) {
       >
         <Icon name="heart-sharp" size={40} color="red" />
       </TouchableOpacity>
-      <Animated.View style={{ transform: [{ translateY: headerTranslateY }] }}>
+      <TouchableOpacity onPress={() =>
+          Linking.openURL("https://www.youtube.com/watch?v=4Y2ZdHCOXok")
+        }>
+      
         <Image style={styles.image} source={image} />
+      </TouchableOpacity>
+      <Animated.View style={{ transform: [{ translateY: headerTranslateY }] }}>
         <SliderBox
           images={images}
           sliderBoxHeight={200}

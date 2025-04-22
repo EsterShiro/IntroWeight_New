@@ -176,13 +176,15 @@ const styles = StyleSheet.create({
   },
   nextButton: {
     backgroundColor: "#007BFF",
-    paddingVertical: 20,
-    paddingHorizontal: 168, // Increased padding for a wider button
+    paddingTop: 30,
+    paddingLeft: 155, 
+    paddingRight: 155,
+    paddingBottom: 30,
     borderRadius: 5,
   },
   nextButtonText: {
     color: "#FFFFFF",
-    fontSize: 16,
+    fontSize: 20,
     fontWeight: "bold",
     textAlign: "center",
   },

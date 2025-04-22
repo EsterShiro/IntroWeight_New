@@ -10,7 +10,7 @@ import {
   Platform,
 } from "react-native";
 import { SliderBox } from "react-native-image-slider-box";
-import Icon from "react-native-vector-icons/FontAwesome6";
+import Icon from "react-native-vector-icons/Ionicons";
 
 const image = require("./assets/RB-remove.png");
 
@@ -101,7 +101,7 @@ function HomeComponent({ navigation }) {
         style={styles.heartIcon}
         onPress={() => navigation.navigate("Favorite")}
       >
-        <Icon name="heart" size={30} color="red" />
+        <Icon name="heart-sharp" size={40} color="red" />
       </TouchableOpacity>
       <Animated.View style={{ transform: [{ translateY: headerTranslateY }] }}>
         <Image style={styles.image} source={image} />
@@ -176,8 +176,8 @@ const styles = StyleSheet.create({
   },
   heartIcon: {
     position: "absolute",
-    top: 15,
-    right: 20,
+    top: 10,
+    right: 15,
     zIndex: 10,
   },
   image: {

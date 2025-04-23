@@ -18,7 +18,9 @@ import { SliderBox } from "react-native-image-slider-box";
 import Icon from "react-native-vector-icons/Ionicons";
 
 const image = require("./assets/RB-remove.png");
-
+const openUrl = (url) => {
+  Linking.openURL(url);
+};
 const workoutImages = [
   require("./assets/adultmember1.jpg"),
   require("./assets/chestmuscle.jpg"),
@@ -94,28 +96,28 @@ function HomeComponent({ navigation }) {
   }, [exitApp]);
 
   // ตรวจสอบสถานะของแอปด้วย AppState
-  useEffect(() => {
-    const handleAppStateChange = (nextAppState) => {
-      if (
-        appState.current.match(/inactive|background/) &&
-        nextAppState === "active"
-      ) {
-        // รีเซ็ต navigation stack ไปที่หน้า HomeScreen เมื่อแอปถูกเปิดใหม่
-        navigation.reset({
-          index: 0,
-          routes: [{ name: "HomeScreen" }],
-        });
-      }
-      appState.current = nextAppState;
-    };
+  // useEffect(() => {
+  //   const handleAppStateChange = (nextAppState) => {
+  //     if (
+  //       appState.current.match(/inactive|background/) &&
+  //       nextAppState === "active"
+  //     ) {
+  //       // รีเซ็ต navigation stack ไปที่หน้า HomeScreen เมื่อแอปถูกเปิดใหม่
+  //       navigation.reset({
+  //         index: 0,
+  //         routes: [{ name: "HomeScreen" }],
+  //       });
+  //     }
+  //     appState.current = nextAppState;
+  //   };
 
-    const subscription = AppState.addEventListener(
-      "change",
-      handleAppStateChange
-    );
+  //   const subscription = AppState.addEventListener(
+  //     "change",
+  //     handleAppStateChange
+  //   );
 
-    return () => subscription.remove(); // ลบ listener เมื่อ component ถูก unmount
-  }, [navigation]);
+  //   return () => subscription.remove(); // ลบ listener เมื่อ component ถูก unmount
+  // }, [navigation]);
 
   const handleFilterPress = (filter) => {
     setSelectedFilter(filter);
@@ -162,7 +164,7 @@ function HomeComponent({ navigation }) {
         <Icon name="heart-sharp" size={40} color="red" />
       </TouchableOpacity>
       <TouchableOpacity onPress={() =>
-          Linking.openURL("https://www.youtube.com/watch?v=4Y2ZdHCOXok")
+          openUrl("https://s.shopee.co.th/2B1lQcVKx2")
         }>
       
         <Image style={styles.image} source={image} />

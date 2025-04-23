@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity,Platform } from 'react-native';
 
 const NoticeScreen = () => {
   const [notices, setNotices] = useState([
@@ -33,6 +33,7 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 16,
     backgroundColor: '#f9f9f9',
+    marginTop: Platform.OS === "android" ? 35 : 0,
   },
   header: {
     fontSize: 24,

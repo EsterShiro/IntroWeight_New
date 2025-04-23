@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView ,Platform} from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 
-const SettingScreen = () => {
+const SettingScreen = ({navigation}) => {
   const [selectedImage, setSelectedImage] = useState(null);
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [language, setLanguage] = useState('ไทย');
@@ -12,7 +12,7 @@ const SettingScreen = () => {
 
   const pickImage = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      mediaTypes: ["images"],
       allowsEditing: true,
       aspect: [1, 1],
       quality: 1,
@@ -64,7 +64,7 @@ const SettingScreen = () => {
           <TouchableOpacity style={styles.menuItem}>
             <Text style={styles.menuText}>Activity Statistics</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.menuItem}>
+          <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate("HomeScreen")}>
             <Text style={styles.menuText}>Log Out</Text>
           </TouchableOpacity>
         </View>
@@ -77,6 +77,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#f8f9fd',
+    marginTop: Platform.OS === "android" ? 35 : 0,
   },
   scrollContainer: {
     alignItems: 'center',

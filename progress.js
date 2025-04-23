@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity,Platform } from 'react-native';
 import { Calendar } from 'react-native-calendars';
 
 const activities = [
@@ -49,6 +49,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#F5F5F5',
     padding: 16,
+    marginTop: Platform.OS === "android" ? 35 : 0,
   },
   header: {
     fontSize: 24,
